@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useMemo, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,12 +6,22 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import Animated from "react-native-reanimated";
+import Animated, {
+  useCode,
+  debug,
+  block,
+  cond,
+  eq,
+} from "react-native-reanimated";
 import Colors from "../../utils/Colors";
 import Start1 from "../../assets/images/start-1.svg";
 import Start2 from "../../assets/images/start-2.svg";
 import Start3 from "../../assets/images/start-3.svg";
 import { Swiper } from "../../common/Swiper";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { IRootStackParamList } from "../../../App";
+
+const { Value } = Animated;
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -28,12 +38,15 @@ const IMAGES = [
   { source: Start3, text: "Buy and sell books with us" },
 ];
 
-export const StartScreen = (): ReactElement => {
+export const StartScreen = ({ navigation }: StartScreenProps): ReactElement => {
+  const [activeIndex, setActiveIndex] = useState(0);
   return (
     <View style={styles.container}>
       <Swiper
         items={IMAGES}
-        onChangeIndex={(index) => console.log("Index: ", index)}
+        onChangeIndex={(index) => {
+          setActiveIndex(index);
+        }}
       >
         {IMAGES.map(({ source: Item, text }, i) => {
           return (
@@ -48,22 +61,60 @@ export const StartScreen = (): ReactElement => {
               <Item width={IMAGE_WIDTH} />
               <View style={styles.textWrapper}>
                 <Text style={styles.text}>{text}</Text>
+                {i === 2 && (
+                  <TouchableOpacity
+                    style={styles.btnStarted}
+                    onPress={() => navigation.navigate("Intro")}
+                  >
+                    <Text style={styles.btnStartedLabel}>Get Started</Text>
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
           );
         })}
       </Swiper>
 
-      <View style={styles.dotContainer}>
+      {/* TODO: need to fix the problem of dot when slide from (right to left). the dot index doesn't stay at correct position */}
+
+      {/* <View style={styles.dotContainer}>
         <TouchableOpacity
           onPress={() => {}}
-          style={[styles.dot]}
+          style={[
+            styles.dot,
+            {
+              backgroundColor:
+                activeIndex === 0 || activeIndex === -0
+                  ? Colors.primary
+                  : "#fff",
+            },
+          ]}
         ></TouchableOpacity>
         <TouchableOpacity
           onPress={() => {}}
-          style={[styles.dot]}
+          style={[
+            styles.dot,
+            {
+              backgroundColor:
+                activeIndex === 1 || activeIndex === -1
+                  ? Colors.primary
+                  : "#fff",
+            },
+          ]}
         ></TouchableOpacity>
-      </View>
+        <TouchableOpacity
+          onPress={() => {}}
+          style={[
+            styles.dot,
+            {
+              backgroundColor:
+                activeIndex === 2 || activeIndex === -2
+                  ? Colors.primary
+                  : "#fff",
+            },
+          ]}
+        ></TouchableOpacity>
+      </View> */}
     </View>
   );
 };
@@ -72,6 +123,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "row",
+  },
+
+  btnStarted: {
+    backgroundColor: Colors.primary,
+    width: 180,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 5,
+    marginVertical: 10,
+  },
+
+  btnStartedLabel: {
+    color: "#fff",
   },
 
   dotContainer: {
@@ -101,5 +166,11 @@ const styles = StyleSheet.create({
   textWrapper: {
     width: SCREEN_WIDTH - 80 * 2,
     marginTop: 10,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
+
+type StartScreenProps = {
+  navigation: StackNavigationProp<IRootStackParamList>;
+};
