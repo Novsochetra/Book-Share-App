@@ -65,7 +65,7 @@ export const Header = ({ searchText, onChangeSearch, images }: HeaderProps) => {
         horizontal
       >
         {images.map((item, index) => (
-          <View style={styles.bookCoverWrapper}>
+          <View key={`book ${index}`} style={styles.bookCoverWrapper}>
             <Image source={item.source} style={styles.bookCover} />
             <Text style={styles.bookCoverLabel}>{item.name}</Text>
           </View>

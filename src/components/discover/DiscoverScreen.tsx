@@ -13,7 +13,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { Feather as FeatherIcon } from "@expo/vector-icons";
 import { IRootStackParamList } from "../../../App";
 import { Header } from "./views/Header";
-import { TapResizeHandler } from "./views/TapResizeHandler";
+import { TapResizeHandler } from "../../common/TapResizeHandler";
 
 type DiscoverScreenProps = {
   navigation: StackNavigationProp<IRootStackParamList>;
@@ -68,7 +68,7 @@ export const DiscoverScreen = ({}: DiscoverScreenProps) => {
               </View>
             </TapResizeHandler>
             {Images.map((item, index) => (
-              <TapResizeHandler>
+              <TapResizeHandler key={`story ${index}`}>
                 <View style={styles.storyWrapper}>
                   <Image source={item.source} style={styles.storyImage} />
                   <Text style={styles.storyLabel}>{item.name}</Text>
@@ -89,7 +89,7 @@ export const DiscoverScreen = ({}: DiscoverScreenProps) => {
             }}
           >
             {Images.map((item, index) => (
-              <TapResizeHandler>
+              <TapResizeHandler key={`trending ${index}`}>
                 <View style={[styles.bookCoverWrapper]}>
                   <Image source={item.source} style={styles.bookCover} />
                 </View>
@@ -102,11 +102,13 @@ export const DiscoverScreen = ({}: DiscoverScreenProps) => {
           <Text style={styles.sectionTitleText}>Best Share</Text>
           <ScrollView showsHorizontalScrollIndicator={false} horizontal>
             {Images.map((item, index) => (
-              <View style={styles.bestShareCoverWrapper}>
-                <Image source={item.source} style={styles.bookCover} />
-                <Text style={styles.bestShareBookTitle}>{item.name}</Text>
-                <Text style={styles.bestShareBookAuthor}>by Jake Arnott</Text>
-              </View>
+              <TapResizeHandler key={`bestShare ${index}`}>
+                <View style={styles.bestShareCoverWrapper}>
+                  <Image source={item.source} style={styles.bookCover} />
+                  <Text style={styles.bestShareBookTitle}>{item.name}</Text>
+                  <Text style={styles.bestShareBookAuthor}>by Jake Arnott</Text>
+                </View>
+              </TapResizeHandler>
             ))}
           </ScrollView>
         </View>
@@ -115,11 +117,13 @@ export const DiscoverScreen = ({}: DiscoverScreenProps) => {
           <Text style={styles.sectionTitleText}>Recently Viewed</Text>
           <ScrollView showsHorizontalScrollIndicator={false} horizontal>
             {Images.map((item, index) => (
-              <View style={styles.bestShareCoverWrapper}>
-                <Image source={item.source} style={styles.bookCover} />
-                <Text style={styles.bestShareBookTitle}>{item.name}</Text>
-                <Text style={styles.bestShareBookAuthor}>by Jake Arnott</Text>
-              </View>
+              <TapResizeHandler key={`recentlyView ${index}`}>
+                <View style={styles.bestShareCoverWrapper}>
+                  <Image source={item.source} style={styles.bookCover} />
+                  <Text style={styles.bestShareBookTitle}>{item.name}</Text>
+                  <Text style={styles.bestShareBookAuthor}>by Jake Arnott</Text>
+                </View>
+              </TapResizeHandler>
             ))}
           </ScrollView>
         </View>

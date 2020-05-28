@@ -6,13 +6,17 @@ import {
   StyleSheet,
   Image,
   ImageSourcePropType,
+  Dimensions,
 } from "react-native";
 import { Feather as FeatherIcon } from "@expo/vector-icons";
+import { TapResizeHandler } from "../../../common/TapResizeHandler";
 
 type ItemProps = {
   source: ImageSourcePropType;
   title: String;
 };
+const SCREEN_WIDTH = Dimensions.get("window").width;
+const ITEM_WIDTH = SCREEN_WIDTH / 3;
 
 export const Item = ({ source, title }: ItemProps) => {
   const [checked, setChecked] = useState(false);
@@ -36,8 +40,8 @@ export const Item = ({ source, title }: ItemProps) => {
 
 const styles = StyleSheet.create({
   imageContainer: {
-    flex: 1,
     height: 150,
+    width: ITEM_WIDTH,
 
     justifyContent: "center",
     alignItems: "center",
@@ -45,7 +49,6 @@ const styles = StyleSheet.create({
 
   overlay: {
     top: 5,
-    left: 19,
     borderRadius: 50,
     position: "absolute",
     width: 100,

@@ -90,7 +90,7 @@ const RootStackNavigator = (): React.ReactElement => {
   return (
     <SafeAreaProvider>
       <NavigationContainer>
-        <RootStack.Navigator initialRouteName="RootBottomTab" headerMode="none">
+        <RootStack.Navigator initialRouteName="Intro" headerMode="none">
           <RootStack.Screen name="RootBottomTab" component={BottomMenu} />
           <RootStack.Screen name="Intro" component={IntroScreen} />
           <RootStack.Screen name="Start" component={StartScreen} />

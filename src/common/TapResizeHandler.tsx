@@ -9,6 +9,7 @@ import Animated, {
   block,
   Value,
   Easing,
+  call,
 } from "react-native-reanimated";
 import { TapGestureHandler, State } from "react-native-gesture-handler";
 import { useTapGestureHandler } from "react-native-redash";
@@ -41,7 +42,7 @@ function runTiming(clock: Animated.Clock, value: number, dest: number) {
   };
 
   const config = {
-    duration: 300,
+    duration: 10,
     toValue: new Value(0),
     easing: Easing.linear,
   };
@@ -61,15 +62,8 @@ function runTiming(clock: Animated.Clock, value: number, dest: number) {
   ]);
 }
 
-export const TapResizeHandler = ({
-  children,
-}: TapResizeHandlerProps): ReactElement => {
-  const {
-    gestureHandler,
-    absolutePosition,
-    position,
-    state,
-  } = useTapGestureHandler();
+const Component = ({ children }: TapResizeHandlerProps): ReactElement => {
+  const { gestureHandler, state } = useTapGestureHandler();
 
   const { clock } = useMemo(() => ({ clock: new Clock() }), []);
   const scale = new Value(1);
@@ -77,36 +71,25 @@ export const TapResizeHandler = ({
   useCode(
     () =>
       block([
-        // cond(
-        //   eq(state, State.UNDETERMINED),
-        //   block([
-        //     debug("UNDETERMINED: ", state),
-        //     set(scale, runTiming(clock, 0.95, 1)),
-        //   ])
-        // ),
         cond(
           eq(state, State.BEGAN),
           block([
             debug("BEGAN: ", state),
-            // set(scale, runTiming(clock, 1, 0.95)),
+            set(scale, runTiming(clock, 1, 0.95)),
           ])
         ),
+        cond(eq(state, State.ACTIVE), block([debug("ACTIVE: ", state)])),
         cond(
-          eq(state, State.ACTIVE),
+          eq(state, State.FAILED),
           block([
-            debug("ACTIVE: ", state),
-            // set(scale, runTiming(clock, 1, 0.95)),
+            debug("FAILED: ", state),
+            cond(clockRunning(clock), stopClock(clock)),
           ])
         ),
-        cond(eq(state, State.FAILED), block([debug("FAILED: ", state)])),
         cond(eq(state, State.CANCELLED), block([debug("CANCELLED: ", state)])),
         cond(
           eq(state, State.END),
-          block([
-            debug("END: ", state),
-            set(scale, runTiming(clock, 0.95, 1)),
-            // stopClock(clock),
-          ])
+          block([debug("END: ", state), set(scale, runTiming(clock, 0.95, 1))])
         ),
       ]),
     []
@@ -127,3 +110,5 @@ export const TapResizeHandler = ({
     </TapGestureHandler>
   );
 };
+
+export const TapResizeHandler = React.memo(Component);

@@ -2,12 +2,8 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  Dimensions,
-  ImageBackground,
-  Image,
   StyleSheet,
   FlatList,
-  ImageSourcePropType,
   TouchableOpacity,
 } from "react-native";
 import { Header } from "./views/Header";
@@ -15,6 +11,7 @@ import Colors from "../../utils/Colors";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { IRootStackParamList } from "../../../App";
 import { Item } from "./views/Item";
+import { TapResizeHandler } from "../../common/TapResizeHandler";
 
 let Images = [
   { source: require("../../assets/images/discover-1.jpg"), name: "History" },
@@ -35,7 +32,9 @@ type IntroScreenProps = {
 export const IntroScreen = ({ navigation }: IntroScreenProps) => {
   const [images, setImages] = useState(Images);
   const renderItem = ({ item }: any) => (
-    <Item source={item.source} title={item.name} />
+    <TapResizeHandler>
+      <Item source={item.source} title={item.name} />
+    </TapResizeHandler>
   );
 
   const onLoadMoreContent = (): void => {
@@ -64,7 +63,9 @@ export const IntroScreen = ({ navigation }: IntroScreenProps) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.btnApply}
-          onPress={() => navigation.navigate("RootBottomTab")}
+          onPress={() =>
+            navigation.navigate("RootBottomTab", { screen: "Discover" })
+          }
         >
           <Text style={styles.btnLabel}>Apply</Text>
         </TouchableOpacity>
