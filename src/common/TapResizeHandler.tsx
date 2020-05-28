@@ -83,10 +83,16 @@ const Component = ({ children }: TapResizeHandlerProps): ReactElement => {
           eq(state, State.FAILED),
           block([
             debug("FAILED: ", state),
-            cond(clockRunning(clock), stopClock(clock)),
+            block([set(scale, runTiming(clock, 0.95, 1))]),
           ])
         ),
-        cond(eq(state, State.CANCELLED), block([debug("CANCELLED: ", state)])),
+        cond(
+          eq(state, State.CANCELLED),
+          block([
+            debug("CANCELLED: ", state),
+            block([set(scale, runTiming(clock, 0.95, 1))]),
+          ])
+        ),
         cond(
           eq(state, State.END),
           block([debug("END: ", state), set(scale, runTiming(clock, 0.95, 1))])
