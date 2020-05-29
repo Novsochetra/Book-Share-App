@@ -9,7 +9,6 @@ import {
   Dimensions,
 } from "react-native";
 import { Feather as FeatherIcon } from "@expo/vector-icons";
-import { TapResizeHandler } from "../../../common/TapResizeHandler";
 
 type ItemProps = {
   source: ImageSourcePropType;
@@ -56,6 +55,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(255, 110, 161, 0.4)",
+    zIndex: 10,
   },
 
   imageWrapper: {
@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
+    zIndex: -1,
   },
 
   imageLabel: {

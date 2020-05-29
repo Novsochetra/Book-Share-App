@@ -11,7 +11,6 @@ import Colors from "../../utils/Colors";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { IRootStackParamList } from "../../../App";
 import { Item } from "./views/Item";
-import { TapResizeHandler } from "../../common/TapResizeHandler";
 
 let Images = [
   { source: require("../../assets/images/discover-1.jpg"), name: "History" },
@@ -32,9 +31,7 @@ type IntroScreenProps = {
 export const IntroScreen = ({ navigation }: IntroScreenProps) => {
   const [images, setImages] = useState(Images);
   const renderItem = ({ item }: any) => (
-    <TapResizeHandler>
-      <Item source={item.source} title={item.name} />
-    </TapResizeHandler>
+    <Item source={item.source} title={item.name} />
   );
 
   const onLoadMoreContent = (): void => {
