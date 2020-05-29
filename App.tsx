@@ -1,34 +1,33 @@
 import React, { ReactElement } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Platform } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer, Route, useRoute } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
+import { enableScreens } from "react-native-screens";
 import { StartScreen } from "./src/components/start/StartScreen";
 import { Feather } from "@expo/vector-icons";
 import { IntroScreen } from "./src/components/intro/IntroScreen";
 import { DiscoverScreen } from "./src/components/discover/DiscoverScreen";
+import { LibraryScreen } from "./src/components/library/LibraryScreen";
 import Colors from "./src/utils/Colors";
+import { StoreScreen } from "./src/components/store/StoreScreen";
+import ProfileScreen from "./src/components/profile/ProfileScreen";
+enableScreens();
 
 console.disableYellowBox = true;
 
 const RootStack = createStackNavigator<IRootStackParamList>();
-const BottomTab = createBottomTabNavigator<IBottomTabParamList>();
+const BottomTab = createMaterialBottomTabNavigator<IBottomTabParamList>();
 
 const BottomMenu = (): ReactElement => {
   return (
     <BottomTab.Navigator
-      initialRouteName="Discover"
-      tabBarOptions={{
-        activeTintColor: Colors.primary,
-        inactiveTintColor: "lightgray",
-        style: {
-          paddingTop: 15,
-          height: 100,
-          justifyContent: "center",
-          alignItems: "center",
-        },
-      }}
+      initialRouteName="Profile"
+      activeColor={Colors.primary}
+      barStyle={{ backgroundColor: "#fff" }}
+      sceneAnimationEnabled={Platform.OS === "ios"} // TODO: Since it has buggy with android elevation
     >
       <BottomTab.Screen
         name="Discover"
@@ -54,11 +53,11 @@ const BottomMenu = (): ReactElement => {
             />
           ),
         }}
-        component={() => <Text>Library</Text>}
+        component={LibraryScreen}
       />
       <BottomTab.Screen
         name="Store"
-        component={() => <Text>Store</Text>}
+        component={StoreScreen}
         options={{
           tabBarIcon: ({ focused }) => (
             <Feather
@@ -71,7 +70,7 @@ const BottomMenu = (): ReactElement => {
       />
       <BottomTab.Screen
         name="Profile"
-        component={() => <Text>Profile</Text>}
+        component={ProfileScreen}
         options={{
           tabBarIcon: ({ focused }) => (
             <Feather
@@ -90,7 +89,7 @@ const RootStackNavigator = (): React.ReactElement => {
   return (
     <SafeAreaProvider>
       <NavigationContainer>
-        <RootStack.Navigator initialRouteName="Intro" headerMode="none">
+        <RootStack.Navigator initialRouteName="RootBottomTab" headerMode="none">
           <RootStack.Screen name="RootBottomTab" component={BottomMenu} />
           <RootStack.Screen name="Intro" component={IntroScreen} />
           <RootStack.Screen name="Start" component={StartScreen} />

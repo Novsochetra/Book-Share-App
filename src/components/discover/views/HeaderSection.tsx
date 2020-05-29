@@ -11,17 +11,21 @@ import {
 import { Feather as FeatherIcon } from "@expo/vector-icons";
 import { SafeAreaView, useSafeArea } from "react-native-safe-area-context";
 import BackgroundHeader from "../../../assets/images/background-header";
+import { StatusBarHeight } from "../../../utils/Statusbar";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-type HeaderProps = {
+type HeaderSectionProps = {
   images: Array<{ source: any; name: string }>;
   searchText: string;
   onChangeSearch: (text: string) => void;
 };
 
-export const Header = ({ searchText, onChangeSearch, images }: HeaderProps) => {
-  const { top } = useSafeArea();
+export const HeaderSection = ({
+  searchText,
+  onChangeSearch,
+  images,
+}: HeaderSectionProps) => {
   return (
     <View style={styles.headerWrapper}>
       <BackgroundHeader
@@ -31,9 +35,13 @@ export const Header = ({ searchText, onChangeSearch, images }: HeaderProps) => {
       />
 
       <View
-        style={
-          (styles.searchWrapper, { marginTop: top, paddingHorizontal: 15 })
-        }
+        style={[
+          styles.searchWrapper,
+          {
+            marginTop: StatusBarHeight,
+            paddingHorizontal: 15,
+          },
+        ]}
       >
         <TextInput
           onChangeText={onChangeSearch}
@@ -49,7 +57,7 @@ export const Header = ({ searchText, onChangeSearch, images }: HeaderProps) => {
           style={styles.iconSearch}
         />
         <FeatherIcon
-          name="filter"
+          name="sliders"
           color="#000"
           size={20}
           style={styles.filterIcon}
