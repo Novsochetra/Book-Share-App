@@ -1,4 +1,4 @@
-import React from "react";
+import React, { isValidElement, useMemo, useState } from "react";
 import {
   Dimensions,
   Image,
@@ -10,10 +10,30 @@ import {
 } from "react-native";
 import { Feather as FeatherIcon } from "@expo/vector-icons";
 import { SafeAreaView, useSafeArea } from "react-native-safe-area-context";
+import Animated, {
+  diffClamp,
+  useCode,
+  add,
+  Extrapolate,
+  interpolate,
+} from "react-native-reanimated";
+import {
+  usePanGestureHandler,
+  withOffset,
+  withSpring,
+  withDecay,
+} from "react-native-redash";
 import BackgroundHeader from "../../../assets/images/background-header";
 import { StatusBarHeight } from "../../../utils/Statusbar";
+import { PanGestureHandler } from "react-native-gesture-handler";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+
+const BOOK_COVER_MARGIN = 5;
+const BOOK_COVER_WIDTH = SCREEN_WIDTH / 5 - BOOK_COVER_MARGIN * 2;
+const BOOK_COVER_CONTAINER_WIDTH = BOOK_COVER_WIDTH + BOOK_COVER_MARGIN * 2;
+
+const { clockRunning, startClock, stopClock, eq, cond, block } = Animated;
 
 type HeaderSectionProps = {
   images: Array<{ source: any; name: string }>;
@@ -26,15 +46,42 @@ export const HeaderSection = ({
   onChangeSearch,
   images,
 }: HeaderSectionProps) => {
+  const {
+    gestureHandler,
+    position,
+    state,
+    translation,
+    velocity,
+  } = usePanGestureHandler();
+
+  // const translateX = withOffset(translation.x, state);
+  const minDiffClamp = useMemo(
+    () => -(BOOK_COVER_WIDTH + BOOK_COVER_MARGIN * 2) * (images.length - 5),
+    [images]
+  );
+
+  const maxDiffClampValue = 0;
+
+  const x = withDecay({
+    state,
+    value: translation.x,
+    velocity: velocity.x,
+    deceleration: 0.997,
+  });
+
+  const translateX = diffClamp(x, minDiffClamp, maxDiffClampValue);
+  const [containerWidth, setContainerWidth] = useState(SCREEN_WIDTH);
+  const visibleCards = Math.floor(containerWidth / BOOK_COVER_CONTAINER_WIDTH);
+
   return (
     <View style={styles.headerWrapper}>
-      <BackgroundHeader
+      {/* <BackgroundHeader
         width={SCREEN_WIDTH}
         height={300}
         style={styles.imageContainer}
-      />
+      /> */}
 
-      <View
+      {/* <View
         style={[
           styles.searchWrapper,
           {
@@ -62,23 +109,82 @@ export const HeaderSection = ({
           size={20}
           style={styles.filterIcon}
         />
-      </View>
+      </View> */}
 
       <Text style={styles.title}>Our Top Picks</Text>
+      <PanGestureHandler {...gestureHandler}>
+        <Animated.View
+          style={{ flexDirection: "row", transform: [{ translateX }] }}
+          onLayout={({ nativeEvent: { layout } }) =>
+            setContainerWidth(layout.width)
+          }
+        >
+          {images.map((item, index) => {
+            // const isTop = 0;
+            // const isAppearring = HEIGHT * visibleCards;
+            // const isDisappearing = -HEIGHT;
+            // const isBottom = HEIGHT * (visibleCards - 1);
+            // const positionY = add(y, index * HEIGHT);
 
-      <ScrollView
-        decelerationRate="fast"
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 15 }}
-        horizontal
-      >
-        {images.map((item, index) => (
-          <View key={`book ${index}`} style={styles.bookCoverWrapper}>
-            <Image source={item.source} style={styles.bookCover} />
-            <Text style={styles.bookCoverLabel}>{item.name}</Text>
-          </View>
-        ))}
-      </ScrollView>
+            // const isLeft = 0;
+
+            // isLeft < isCenter < isRight
+
+            // isRight < isCenter < isLeft
+
+            const isEndLeft = 0;
+
+            const isDisappearing = -BOOK_COVER_CONTAINER_WIDTH;
+            const isAppearring = BOOK_COVER_CONTAINER_WIDTH * visibleCards;
+            const isCenter =
+              -BOOK_COVER_CONTAINER_WIDTH * (index + 1) +
+              BOOK_COVER_CONTAINER_WIDTH * 2;
+
+            const isLeft = 0;
+            const isRight = BOOK_COVER_CONTAINER_WIDTH * (visibleCards - 10);
+
+            console.log("IsLeft: ", isRight, " => ", isCenter, " => ", isLeft);
+            const positionX = add(
+              translateX,
+              index * BOOK_COVER_WIDTH + BOOK_COVER_MARGIN * 2
+            );
+
+            const scale = interpolate(positionX, {
+              // inputRange: [isLeft, isCenter, isRight],
+              // outputRange: [0.5, 1, 0.5],
+              // inputRange: [
+              //   -BOOK_COVER_CONTAINER_WIDTH * (index + 1),
+              //   -10,
+              //   BOOK_COVER_CONTAINER_WIDTH * (index + 1),
+              //   BOOK_COVER_CONTAINER_WIDTH * (index + 2),
+              //   // BOOK_COVER_CONTAINER_WIDTH * index + 2,
+              // ],
+              // outputRange: [0.5, 0.5, 1, 0.5],
+              inputRange: [isLeft, isAppearring, isRight],
+              outputRange: [1, 1, 0.5],
+              extrapolate: Extrapolate.CLAMP,
+            });
+
+            // const scale = 1;
+
+            // const scale = interpolate(positionY, {
+            //   inputRange: [isDisappearing, isTop, isBottom, isAppearring],
+            //   outputRange: [0.5, 1, 1, 0.5],
+            //   extrapolate: Extrapolate.CLAMP,
+            // })
+
+            return (
+              <Animated.View
+                key={`book ${index}`}
+                style={[styles.bookCoverWrapper, { transform: [{ scale }] }]}
+              >
+                <Image source={item.source} style={styles.bookCover} />
+                <Text style={styles.bookCoverLabel}>{item.name}</Text>
+              </Animated.View>
+            );
+          })}
+        </Animated.View>
+      </PanGestureHandler>
     </View>
   );
 };
@@ -135,10 +241,11 @@ const styles = StyleSheet.create({
   },
 
   bookCover: {
-    width: 75,
+    // width: 75,
+    width: BOOK_COVER_WIDTH,
     height: 100,
     borderRadius: 10,
-    margin: 5,
+    margin: BOOK_COVER_MARGIN,
   },
 
   bookCoverLabel: {
