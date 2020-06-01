@@ -17,17 +17,17 @@ const TRENDING_CONTAINER = SCREEN_WIDTH - 30;
 const TRENDING_BOOK_WIDTH = TRENDING_CONTAINER / 3 - SPACER;
 
 type BestShareSectionProps = {
-  images: Array<{ name: string; source: ImageSourcePropType }>;
+  books: Array<{ name: string; source: ImageSourcePropType }>;
 };
 
 export const BestShareSection = ({
-  images,
+  books,
 }: BestShareSectionProps): ReactElement => {
   return (
     <View style={styles.container}>
       <Text style={styles.sectionTitleText}>Best Share</Text>
       <ScrollView showsHorizontalScrollIndicator={false} horizontal>
-        {images.map((item, index) => (
+        {books.map((item, index) => (
           <TapResizeHandler key={`bestShare ${index}`}>
             <View style={styles.bestShareCoverWrapper}>
               <Image source={item.source} style={styles.bookCover} />

@@ -16,11 +16,11 @@ const TRENDING_CONTAINER = SCREEN_WIDTH - 30;
 const TRENDING_BOOK_WIDTH = TRENDING_CONTAINER / 3 - SPACER;
 
 type TrendingSectionProps = {
-  images: Array<{ name: string; source: ImageSourcePropType }>;
+  books: Array<{ name: string; source: ImageSourcePropType }>;
 };
 
 export const TrendingSection = ({
-  images,
+  books,
 }: TrendingSectionProps): ReactElement => {
   return (
     <View style={styles.container}>
@@ -33,7 +33,7 @@ export const TrendingSection = ({
           width: TRENDING_CONTAINER,
         }}
       >
-        {images.map((item, index) => (
+        {books.map((item, index) => (
           <TapResizeHandler key={`trending ${index}`}>
             <View style={[styles.bookCoverWrapper]}>
               <Image source={item.source} style={styles.bookCover} />

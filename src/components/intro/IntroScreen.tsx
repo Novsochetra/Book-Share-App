@@ -30,8 +30,8 @@ type IntroScreenProps = {
 
 export const IntroScreen = ({ navigation }: IntroScreenProps) => {
   const [images, setImages] = useState(Images);
-  const renderItem = ({ item }: any) => (
-    <Item source={item.source} title={item.name} />
+  const renderItem = ({ item, index }: any) => (
+    <Item key={`intro ${index}`} source={item.source} title={item.name} />
   );
 
   const onLoadMoreContent = (): void => {
@@ -76,6 +76,7 @@ export const IntroScreen = ({ navigation }: IntroScreenProps) => {
         data={images}
         extraData={images}
         renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
         numColumns={3}
         ListHeaderComponent={Header}
         ListFooterComponent={renderFooterComponent}

@@ -7,25 +7,19 @@ import {
   TextInput,
   StyleSheet,
   ScrollView,
+  Platform,
 } from "react-native";
 import { Feather as FeatherIcon } from "@expo/vector-icons";
-import { SafeAreaView, useSafeArea } from "react-native-safe-area-context";
 import Animated, {
   diffClamp,
-  useCode,
   add,
   Extrapolate,
   interpolate,
 } from "react-native-reanimated";
-import {
-  usePanGestureHandler,
-  withOffset,
-  withSpring,
-  withDecay,
-} from "react-native-redash";
+import { usePanGestureHandler, withDecay } from "react-native-redash";
 import BackgroundHeader from "../../../assets/images/background-header";
-import { StatusBarHeight } from "../../../utils/Statusbar";
 import { PanGestureHandler } from "react-native-gesture-handler";
+import { useSafeArea } from "react-native-safe-area-context";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -36,28 +30,28 @@ const BOOK_COVER_CONTAINER_WIDTH = BOOK_COVER_WIDTH + BOOK_COVER_MARGIN * 2;
 const { clockRunning, startClock, stopClock, eq, cond, block } = Animated;
 
 type HeaderSectionProps = {
-  images: Array<{ source: any; name: string }>;
+  books: Array<{ source: any; name: string }>;
   searchText: string;
   onChangeSearch: (text: string) => void;
 };
 
 export const HeaderSection = ({
+  books,
   searchText,
   onChangeSearch,
-  images,
 }: HeaderSectionProps) => {
   const {
     gestureHandler,
-    position,
     state,
     translation,
     velocity,
   } = usePanGestureHandler();
 
-  // const translateX = withOffset(translation.x, state);
+  const { top } = useSafeArea();
+
   const minDiffClamp = useMemo(
-    () => -(BOOK_COVER_WIDTH + BOOK_COVER_MARGIN * 2) * (images.length - 5),
-    [images]
+    () => -(BOOK_COVER_WIDTH + BOOK_COVER_MARGIN * 2) * (books.length - 5),
+    [books]
   );
 
   const maxDiffClampValue = 0;
@@ -70,108 +64,75 @@ export const HeaderSection = ({
   });
 
   const translateX = diffClamp(x, minDiffClamp, maxDiffClampValue);
-  const [containerWidth, setContainerWidth] = useState(SCREEN_WIDTH);
-  const visibleCards = Math.floor(containerWidth / BOOK_COVER_CONTAINER_WIDTH);
+  const visibleCards = 5;
 
   return (
-    <View style={styles.headerWrapper}>
-      {/* <BackgroundHeader
-        width={SCREEN_WIDTH}
-        height={300}
-        style={styles.imageContainer}
-      /> */}
+    <PanGestureHandler {...gestureHandler}>
+      <Animated.View style={styles.headerWrapper}>
+        <BackgroundHeader
+          width={SCREEN_WIDTH}
+          height={300}
+          style={styles.imageContainer}
+        />
 
-      {/* <View
-        style={[
-          styles.searchWrapper,
-          {
-            marginTop: StatusBarHeight,
-            paddingHorizontal: 15,
-          },
-        ]}
-      >
-        <TextInput
-          onChangeText={onChangeSearch}
-          value={searchText}
-          style={styles.searchInput}
-          placeholder="Search Books, Authors"
-          clearButtonMode="always"
-        />
-        <FeatherIcon
-          name="search"
-          color="#000"
-          size={20}
-          style={styles.iconSearch}
-        />
-        <FeatherIcon
-          name="sliders"
-          color="#000"
-          size={20}
-          style={styles.filterIcon}
-        />
-      </View> */}
+        <View
+          style={[
+            styles.searchWrapper,
+            {
+              paddingHorizontal: 15,
+            },
+          ]}
+        >
+          <TextInput
+            onChangeText={onChangeSearch}
+            value={searchText}
+            style={styles.searchInput}
+            placeholder="Search Books, Authors"
+            clearButtonMode="always"
+          />
+          <FeatherIcon
+            name="search"
+            color="#000"
+            size={20}
+            style={styles.iconSearch}
+          />
+          <FeatherIcon
+            name="sliders"
+            color="#000"
+            size={20}
+            style={styles.filterIcon}
+          />
+        </View>
 
-      <Text style={styles.title}>Our Top Picks</Text>
-      <PanGestureHandler {...gestureHandler}>
+        <Text style={styles.title}>Our Top Picks</Text>
+
         <Animated.View
           style={{ flexDirection: "row", transform: [{ translateX }] }}
-          onLayout={({ nativeEvent: { layout } }) =>
-            setContainerWidth(layout.width)
-          }
         >
-          {images.map((item, index) => {
-            // const isTop = 0;
-            // const isAppearring = HEIGHT * visibleCards;
-            // const isDisappearing = -HEIGHT;
-            // const isBottom = HEIGHT * (visibleCards - 1);
-            // const positionY = add(y, index * HEIGHT);
-
-            // const isLeft = 0;
-
-            // isLeft < isCenter < isRight
-
-            // isRight < isCenter < isLeft
-
-            const isEndLeft = 0;
-
-            const isDisappearing = -BOOK_COVER_CONTAINER_WIDTH;
+          {books.map((item, index) => {
+            const isTop = 0;
             const isAppearring = BOOK_COVER_CONTAINER_WIDTH * visibleCards;
+            const isDisappearing = -BOOK_COVER_CONTAINER_WIDTH;
             const isCenter =
-              -BOOK_COVER_CONTAINER_WIDTH * (index + 1) +
-              BOOK_COVER_CONTAINER_WIDTH * 2;
+              (BOOK_COVER_CONTAINER_WIDTH * (visibleCards - 1)) / 2;
+            const isBottom = BOOK_COVER_CONTAINER_WIDTH * (visibleCards - 1);
 
-            const isLeft = 0;
-            const isRight = BOOK_COVER_CONTAINER_WIDTH * (visibleCards - 10);
-
-            console.log("IsLeft: ", isRight, " => ", isCenter, " => ", isLeft);
             const positionX = add(
               translateX,
-              index * BOOK_COVER_WIDTH + BOOK_COVER_MARGIN * 2
+              index * BOOK_COVER_CONTAINER_WIDTH
             );
 
             const scale = interpolate(positionX, {
-              // inputRange: [isLeft, isCenter, isRight],
-              // outputRange: [0.5, 1, 0.5],
-              // inputRange: [
-              //   -BOOK_COVER_CONTAINER_WIDTH * (index + 1),
-              //   -10,
-              //   BOOK_COVER_CONTAINER_WIDTH * (index + 1),
-              //   BOOK_COVER_CONTAINER_WIDTH * (index + 2),
-              //   // BOOK_COVER_CONTAINER_WIDTH * index + 2,
-              // ],
-              // outputRange: [0.5, 0.5, 1, 0.5],
-              inputRange: [isLeft, isAppearring, isRight],
-              outputRange: [1, 1, 0.5],
+              inputRange: [
+                isDisappearing,
+                isTop,
+                isCenter,
+                isBottom,
+                isAppearring,
+              ],
+              outputRange: [0.5, 0.7, 1, 0.7, 0.7],
               extrapolate: Extrapolate.CLAMP,
             });
-
-            // const scale = 1;
-
-            // const scale = interpolate(positionY, {
-            //   inputRange: [isDisappearing, isTop, isBottom, isAppearring],
-            //   outputRange: [0.5, 1, 1, 0.5],
-            //   extrapolate: Extrapolate.CLAMP,
-            // })
 
             return (
               <Animated.View
@@ -184,20 +145,20 @@ export const HeaderSection = ({
             );
           })}
         </Animated.View>
-      </PanGestureHandler>
-    </View>
+      </Animated.View>
+    </PanGestureHandler>
   );
 };
 
 const styles = StyleSheet.create({
   imageContainer: {
-    transform: [{ scaleX: 1.1 }, { scaleY: 1.5 }],
+    transform: [{ scaleX: 1.1 }, { scaleY: 1.2 }],
     top: -10,
     position: "absolute",
   },
 
   headerWrapper: {
-    height: 350,
+    height: 310,
     justifyContent: "center",
   },
 
@@ -241,7 +202,6 @@ const styles = StyleSheet.create({
   },
 
   bookCover: {
-    // width: 75,
     width: BOOK_COVER_WIDTH,
     height: 100,
     borderRadius: 10,

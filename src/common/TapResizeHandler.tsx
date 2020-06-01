@@ -1,15 +1,11 @@
 import React, { ReactNode, ReactElement, useMemo } from "react";
-import { View, Text } from "react-native";
+import {} from "react-native";
 import Animated, {
-  interpolate,
-  Extrapolate,
   Clock,
-  Transition,
   useCode,
   block,
   Value,
   Easing,
-  call,
 } from "react-native-reanimated";
 import { TapGestureHandler, State } from "react-native-gesture-handler";
 import { useTapGestureHandler } from "react-native-redash";
@@ -18,20 +14,7 @@ type TapResizeHandlerProps = {
   children: ReactNode;
 };
 
-const {
-  cond,
-  and,
-  eq,
-  or,
-  neq,
-  not,
-  clockRunning,
-  set,
-  startClock,
-  debug,
-  timing,
-  stopClock,
-} = Animated;
+const { cond, eq, clockRunning, set, startClock, timing, stopClock } = Animated;
 
 function runTiming(clock: Animated.Clock, value: number, dest: number) {
   const state = {
@@ -57,7 +40,7 @@ function runTiming(clock: Animated.Clock, value: number, dest: number) {
       startClock(clock),
     ]),
     timing(clock, state, config),
-    cond(state.finished, debug("stop clock", stopClock(clock))),
+    cond(state.finished, stopClock(clock)),
     state.position,
   ]);
 }
@@ -73,44 +56,27 @@ const Component = ({ children }: TapResizeHandlerProps): ReactElement => {
       block([
         cond(
           eq(state, State.BEGAN),
-          block([
-            debug("BEGAN: ", state),
-            set(scale, runTiming(clock, 1, 0.95)),
-          ])
+          block([set(scale, runTiming(clock, 1, 0.95))])
         ),
-        cond(eq(state, State.ACTIVE), block([debug("ACTIVE: ", state)])),
         cond(
           eq(state, State.FAILED),
-          block([
-            debug("FAILED: ", state),
-            block([set(scale, runTiming(clock, 0.95, 1))]),
-          ])
+          block([block([set(scale, runTiming(clock, 0.95, 1))])])
         ),
         cond(
           eq(state, State.CANCELLED),
-          block([
-            debug("CANCELLED: ", state),
-            block([set(scale, runTiming(clock, 0.95, 1))]),
-          ])
+          block([block([set(scale, runTiming(clock, 0.95, 1))])])
         ),
         cond(
           eq(state, State.END),
-          block([debug("END: ", state), set(scale, runTiming(clock, 0.95, 1))])
+          block([set(scale, runTiming(clock, 0.95, 1))])
         ),
       ]),
     []
   );
 
-  console.log("FAILED: ", State.FAILED);
-  console.log("BEGAN: ", State.BEGAN);
-  console.log("ACTIVE: ", State.ACTIVE);
-  console.log("CANCELLED: ", State.CANCELLED);
-  console.log("END: ", State.END);
-
   return (
     <TapGestureHandler {...gestureHandler}>
       <Animated.View style={{ transform: [{ scale }] }}>
-        <Animated.Code>{() => debug("scale: ", scale)}</Animated.Code>
         {children}
       </Animated.View>
     </TapGestureHandler>

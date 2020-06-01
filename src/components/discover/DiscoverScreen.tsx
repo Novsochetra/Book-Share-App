@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { IRootStackParamList } from "../../../App";
 import { DisCoverView } from "./DisCoverView";
+import { BooksData } from "../../dummies/Books";
 
 type DiscoverScreenProps = {
   navigation: StackNavigationProp<IRootStackParamList>;
@@ -31,6 +32,7 @@ export const DiscoverScreen = ({}: DiscoverScreenProps) => {
       onChangeSearch={onChangeSearch}
       searchText={search}
       images={Images}
+      books={BooksData}
     />
   );
 };

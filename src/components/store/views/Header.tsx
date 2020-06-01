@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react";
-import { View, Text, TextInput, StyleSheet } from "react-native";
-import { SafeAreaView, useSafeArea } from "react-native-safe-area-context";
+import { View, Text, TextInput, StyleSheet, Platform } from "react-native";
+import { useSafeArea } from "react-native-safe-area-context";
 import { Feather as FeatherIcon } from "@expo/vector-icons";
 
 type HeaderProps = {
@@ -14,11 +14,15 @@ export const Header = ({
   safeAreaHeight,
   onChangeSearch,
 }: HeaderProps): ReactElement => {
+  const { top } = useSafeArea();
   return (
     <View
       style={[
         styles.searchWrapper,
-        { marginTop: safeAreaHeight, paddingHorizontal: 15 },
+        {
+          marginTop: Platform.OS === "ios" ? top : top + 20,
+          paddingHorizontal: 15,
+        },
       ]}
     >
       <View style={styles.wrapper}>

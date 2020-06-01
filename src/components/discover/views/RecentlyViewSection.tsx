@@ -17,17 +17,17 @@ const TRENDING_CONTAINER = SCREEN_WIDTH - 30;
 const TRENDING_BOOK_WIDTH = TRENDING_CONTAINER / 3 - SPACER;
 
 type RecentlyViewSection = {
-  images: Array<{ name: string; source: ImageSourcePropType }>;
+  books: Array<{ name: string; source: ImageSourcePropType }>;
 };
 
 export const RecentlyViewSection = ({
-  images,
+  books,
 }: RecentlyViewSection): ReactElement => {
   return (
     <View style={styles.container}>
       <Text style={styles.sectionTitleText}>Recently Viewed</Text>
       <ScrollView showsHorizontalScrollIndicator={false} horizontal>
-        {images.map((item, index) => (
+        {books.map((item, index) => (
           <TapResizeHandler key={`recentlyView ${index}`}>
             <View style={styles.bestShareCoverWrapper}>
               <Image source={item.source} style={styles.bookCover} />

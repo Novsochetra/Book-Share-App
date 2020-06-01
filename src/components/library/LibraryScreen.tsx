@@ -1,10 +1,10 @@
 import React, { ReactElement } from "react";
-import { View, Text } from "react-native";
+import {} from "react-native";
 import { LibraryView } from "./LibraryView";
-import { ImagesData } from "../../dummies/Images";
+import { BooksData } from "../../dummies/Books";
 
 type LibraryScreenProps = {};
 
 export const LibraryScreen = ({}: LibraryScreenProps): ReactElement => {
-  return <LibraryView data={ImagesData} />;
+  return <LibraryView data={BooksData} />;
 };

@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
-import { ImagesData } from "../../../dummies/Images";
+import profileImageSource from "../../../assets/images/profile.jpg";
 import { Colors } from "../../../utils/Colors";
 
 type ProfileImageProps = {};
@@ -9,7 +9,7 @@ export const ProfileImage = ({}: ProfileImageProps) => {
   return (
     <View style={styles.container}>
       <View style={styles.profileWrapper}>
-        <Image source={ImagesData[6].source} style={styles.profileImage} />
+        <Image source={profileImageSource} style={styles.profileImage} />
       </View>
       <TouchableOpacity style={styles.btnEditProfile}>
         <Text style={styles.btnEditProfileLabel}>Edit Profile</Text>

@@ -2,7 +2,6 @@ import React, { ReactElement } from "react";
 import {
   View,
   ScrollView,
-  Dimensions,
   StyleSheet,
   ImageSourcePropType,
 } from "react-native";
@@ -15,11 +14,13 @@ import { RecentlyViewSection } from "./views/RecentlyViewSection";
 type DisCoverViewProps = {
   searchText: string;
   images: Array<{ source: ImageSourcePropType; name: string }>;
+  books: Array<{ source: ImageSourcePropType; name: string }>;
   onChangeSearch: (text: string) => void;
 };
 
 export const DisCoverView = ({
   images,
+  books,
   searchText,
   onChangeSearch,
 }: DisCoverViewProps): ReactElement => {
@@ -27,18 +28,18 @@ export const DisCoverView = ({
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <HeaderSection
-          images={images}
+          books={books}
           searchText={searchText}
           onChangeSearch={onChangeSearch}
         />
 
         <StorySection images={images} />
 
-        <TrendingSection images={images} />
+        <TrendingSection books={books} />
 
-        <BestShareSection images={images} />
+        <BestShareSection books={books} />
 
-        <RecentlyViewSection images={images} />
+        <RecentlyViewSection books={books} />
       </ScrollView>
     </View>
   );

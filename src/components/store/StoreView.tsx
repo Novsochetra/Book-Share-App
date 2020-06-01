@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, ImageSourcePropType } from "react-native";
 import { Header } from "./views/Header";
 import { useSafeArea } from "react-native-safe-area-context";
 import { FlatList } from "react-native-gesture-handler";
-import { ImagesData } from "../../dummies/Images";
+import { BooksData } from "../../dummies/Books";
 import { BookItem } from "./views/BookItem";
 
 type StoreViewProps = {
@@ -34,14 +34,12 @@ export const StoreView = ({
         onChangeSearch={onSearchChange}
         searchValue={searchText}
       />
-      {/* <View style={styles.contentWrapper}> */}
       <FlatList
-        data={ImagesData}
+        data={BooksData}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.contentWrapper}
       />
-      {/* </View> */}
     </View>
   );
 };

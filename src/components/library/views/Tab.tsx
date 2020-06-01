@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react";
 import { Dimensions, FlatList, Image, View, StyleSheet } from "react-native";
-import { ImagesData } from "../../../dummies/Images";
+import { BooksData } from "../../../dummies/Books";
 import { TapResizeHandler } from "../../../common/TapResizeHandler";
 
 const WINDOW_WIDTH = Dimensions.get("window").width;
@@ -24,8 +24,9 @@ export const Tab = ({}: TabProps): ReactElement => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={ImagesData}
+        data={BooksData}
         renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
         numColumns={2}
         contentContainerStyle={{ paddingVertical: 15 }}
         showsVerticalScrollIndicator={false}

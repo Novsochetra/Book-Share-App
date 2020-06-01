@@ -1,5 +1,5 @@
 import React, { ReactElement, useMemo, ReactNode, useState } from "react";
-import { Text, Dimensions } from "react-native";
+import { Dimensions } from "react-native";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
 import { usePanGestureHandler, withSpring } from "react-native-redash";
 import Animated, { Extrapolate, Value, Clock } from "react-native-reanimated";
@@ -15,17 +15,9 @@ const {
   floor,
   onChange,
   divide,
-  greaterThan,
   set,
-  and,
-  modulo,
   multiply,
-  clockRunning,
-  stopClock,
-  startClock,
-  not,
   neq,
-  sub,
 } = Animated;
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -39,7 +31,6 @@ const SPRING_CONFIG = {
 };
 
 export const Swiper = ({
-  // index,
   items,
   children,
   onChangeIndex,
@@ -51,8 +42,6 @@ export const Swiper = ({
     translation,
     velocity,
   } = usePanGestureHandler();
-
-  const [activeIndex, setActiveIndex] = useState(0);
 
   const { translateX, index } = useMemo(
     () => ({
@@ -77,26 +66,7 @@ export const Swiper = ({
     velocity: Animated.Node<number>
   ) => {
     return block([
-      // cond(
-      //   greaterThan(velocity, 0),
-      //   block([
-      //     // debug(
-      //     //   "velocity +: ",
-      //     //   multiply(floor(divide(floor(value), SCREEN_WIDTH)), -1)
-      //     // ),
-      //     set(index, multiply(floor(divide(floor(value), SCREEN_WIDTH)), -1)),
-      //   ]),
-      //   block([
-      //     // debug(
-      //     //   "velocity -: ",
-      //     //   multiply(floor(divide(floor(value), SCREEN_WIDTH)), -1)
-      //     // ),
-      //     set(index, multiply(floor(divide(floor(value), SCREEN_WIDTH)), -1)),
-      //   ])
-      // ),
       set(index, multiply(floor(divide(floor(value), SCREEN_WIDTH)), -1)),
-      // set(index, floor(divide(floor(value), SCREEN_WIDTH))),
-      // debug("index block: ", index),
       index,
     ]);
   };
@@ -110,7 +80,6 @@ export const Swiper = ({
             eq(state, State.END),
             call([index, translateX], ([index, translateX]) => {
               console.log("Index: ", index);
-              // console.log("translateX: ", translateX);
               onChangeIndex(index);
             })
           )
@@ -155,7 +124,6 @@ export const Swiper = ({
 interface SwiperProps {
   items: Array<{ source: any; value?: string }>;
   children?: ReactNode;
-  // index: Animated.Value<number>;
 
   onChangeIndex: (index: number) => void;
 }
